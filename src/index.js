@@ -17,12 +17,22 @@ let count=0;
 
 io.on('connection', (socket) => {
     console.log('new connection!')
-    socket.emit('countUpdated',count)
+    // socket.emit('countUpdated',count)
 
-    socket.on('increment', () => {
-        count++;
-        // socket.emit('countUpdated',count);
-        io.emit('countUpdated', count);
+    // socket.on('increment', () => {
+    //     count++;
+    //     // socket.emit('countUpdated',count);
+    //     io.emit('countUpdated', count);
+    // })
+    socket.emit('sendMessage', ' Welcome!');
+    socket.broadcast.emit('sendMessage', ' new user has joined!');
+
+    socket.on('sendMessage', (value) => {
+        io.emit('sendMessage',value);
+    })
+    
+    socket.on('disconnect', () =>{
+        io.emit('sendMessage','A user has left!');
     })
 })
 
