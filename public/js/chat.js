@@ -6,11 +6,13 @@ const form = document.querySelector('#form-input');
 const message = document.querySelector('#inputValue');
 const button = document.querySelector('#submit');
 const locationButton = document.querySelector('#send-location');
-const messages=document.querySelector('#message');
+const messages = document.querySelector('#message');
+const urls=document.querySelector('#url');
 
 //templates
 
 const messageTemplate=document.querySelector('#message-template').innerHTML;
+const locationTemplate=document.querySelector('#location-template').innerHTML;
 
 socket.on('sendMessage', (message) => {
     console.log(message);
@@ -18,6 +20,13 @@ socket.on('sendMessage', (message) => {
         message,
     });
     messages.insertAdjacentHTML('beforeend', html);
+})
+
+socket.on('locationMessage', (url) => {
+    const html= Mustache.render(locationTemplate, {
+        url,
+    });
+    urls.insertAdjacentHTML('beforeend', html);
 })
 
 document.querySelector('#submit').addEventListener('click', (e) => {
