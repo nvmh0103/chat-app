@@ -1,21 +1,37 @@
 const socket= io();
 
-// socket.on('countUpdated', (count) => {
-//     console.log('Updated!',count);
+//elements
 
-// })
-// document.querySelector('#increment').addEventListener('click', () => {
-//     socket.emit('increment');
-// })
-socket.on('sendMessage', (value) => {
-    console.log(value);
+const form = document.querySelector('#form-input');
+const message = document.querySelector('#inputValue');
+const button = document.querySelector('#submit');
+const locationButton = document.querySelector('#send-location');
+const messages=document.querySelector('#message');
+
+//templates
+
+const messageTemplate=document.querySelector('#message-template').innerHTML;
+
+socket.on('sendMessage', (message) => {
+    console.log(message);
+    const html= Mustache.render(messageTemplate, {
+        message,
+    });
+    messages.insertAdjacentHTML('beforeend', html);
 })
 
-const form=document.querySelector('#form-input');
-const value=document.querySelector('#inputValue');
 document.querySelector('#submit').addEventListener('click', (e) => {
-    e.preventDefault()
-    socket.emit('sendMessage',value.value, (error) =>{
+    e.preventDefault();
+    //disable
+    button.setAttribute('disabled','disabled');
+
+    socket.emit('sendMessage', message.value, (error) =>{
+        //enable
+        button.removeAttribute('disabled');
+        message.value='';
+        message.focus();
+
+
         if (error){
             return console.log(error);
         }
@@ -26,8 +42,13 @@ document.querySelector('#send-location').addEventListener('click', () => {
     if (!navigator.geolocation) {
         return alert('Geolocation is not supported!');
     }
+    // disable
+    locationButton.setAttribute('disabled','disabled');
 
     navigator.geolocation.getCurrentPosition((position) => {
+        // enable
+        locationButton.removeAttribute('disabled');
+
         socket.emit('sendLocation', {
             longitude: position.coords.longitude,
             latitude: position.coords.latitude,
