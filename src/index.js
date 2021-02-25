@@ -19,7 +19,6 @@ app.use(express.static(publicDirectoryPath));
 let count=0;
 
 io.on('connection', (socket) => {
-    console.log('new connection!')
     
     // join room
     socket.on('join', ({ username, room }, callback) => {

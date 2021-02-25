@@ -53,7 +53,6 @@ message.addEventListener('input', () =>{
 
 
 socket.on('sendMessage', (message) => {
-    console.log(message);
     const html= Mustache.render(messageTemplate, {
         message: message.text,
         createdAt: moment(message.createdAt).format('hh:mm A'),
@@ -96,7 +95,6 @@ document.querySelector('#submit').addEventListener('click', (e) => {
         if (error){
             return console.log(error);
         }
-        console.log('Message delivered!')
     });
 })
 document.querySelector('#send-location').addEventListener('click', () => {
@@ -114,7 +112,7 @@ document.querySelector('#send-location').addEventListener('click', () => {
             longitude: position.coords.longitude,
             latitude: position.coords.latitude,
         }, () => {
-            console.log('Location shared!')
+        
         });
     })
 })
