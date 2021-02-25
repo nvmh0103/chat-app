@@ -3,6 +3,7 @@ const path= require('path');
 const http= require('http');
 const socketio= require('socket.io');
 const Filter= require('bad-words');
+const { generateMessage, generateLocation }= require('./utils/message');
 
 const app=express();
 const server= http.createServer(app);
@@ -18,15 +19,8 @@ let count=0;
 
 io.on('connection', (socket) => {
     console.log('new connection!')
-    // socket.emit('countUpdated',count)
-
-    // socket.on('increment', () => {
-    //     count++;
-    //     // socket.emit('countUpdated',count);
-    //     io.emit('countUpdated', count);
-    // })
-    socket.emit('sendMessage', ' Welcome!');
-    socket.broadcast.emit('sendMessage', ' new user has joined!');
+    socket.emit('sendMessage', generateMessage('Welcome'));
+    socket.broadcast.emit('sendMessage', generateMessage('new user has joined!'));
 
     socket.on('sendMessage', (value, callback) => {
         const filter= new Filter();
@@ -35,16 +29,16 @@ io.on('connection', (socket) => {
             return callback(' Bad words not allowed');
         }
 
-        io.emit('sendMessage',value);
-        callback('Delivered again!');
+        io.emit('sendMessage',generateMessage(value));
+        callback();
     })
     
     socket.on('disconnect', () =>{
-        io.emit('sendMessage','A user has left!');
+        io.emit('sendMessage',generateMessage('A user has left!'));
     })
     
     socket.on('sendLocation', ({longitude,latitude}, callback) => {
-        io.emit('locationMessage', `https://google.com/maps?q=${longitude},${latitude}`);
+        io.emit('locationMessage', generateLocation(`https://google.com/maps?q=${longitude},${latitude}`));
         callback();
     })
 })
